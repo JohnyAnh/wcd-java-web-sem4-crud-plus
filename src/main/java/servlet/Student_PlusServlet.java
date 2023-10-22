@@ -2,6 +2,7 @@ package servlet;
 
 import dao.Student_PlusDAO;
 import entity.Student_Plus;
+import org.apache.commons.beanutils.BeanUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,8 +30,6 @@ public class Student_PlusServlet extends HttpServlet {
         String url = request.getRequestURL().toString();
         request.setCharacterEncoding("utf-8");
 
-        findAll(request, response);
-        request.getRequestDispatcher("/views/Student_Plus.jsp").forward(request,response);
 
 
         Student_Plus student = null;
@@ -46,7 +45,7 @@ public class Student_PlusServlet extends HttpServlet {
             Student_PlusDAO dao = new Student_PlusDAO();
             if (request.getParameter("id")!= null){
                 student = dao.findById(Integer.parseInt((request.getParameter("id"))));
-            request.setAttribute("student", student);
+                request.setAttribute("student", student);
             }
         } else if (url.contains("reset")) {
             student = new Student_Plus();
@@ -69,8 +68,9 @@ public class Student_PlusServlet extends HttpServlet {
 //            }
 //        }
 //
-//        findAll(request, response, pageNumber, pageSize);
-//        request.getRequestDispatcher("/views/Student_Plus.jsp").forward(request, response);
+        findAll(request, response);
+        request.getRequestDispatcher("/views/Student_Plus.jsp").forward(request,response);
+
     }
 
     private void findAll(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
@@ -84,7 +84,7 @@ public class Student_PlusServlet extends HttpServlet {
         }
     }
 
-//    private void findAll(HttpServletRequest request, HttpServletResponse response, int pageNumber, int pageSize) {
+    //    private void findAll(HttpServletRequest request, HttpServletResponse response, int pageNumber, int pageSize) {
 //        try {
 //            Student_PlusDAO dao = new Student_PlusDAO();
 //            List<Student_Plus> list = dao.findAll(pageNumber, pageSize);
@@ -94,6 +94,70 @@ public class Student_PlusServlet extends HttpServlet {
 //            request.setAttribute("error", "Error: " + e.getMessage());
 //        }
 //    }
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        String url = request.getRequestURL().toString();
+        request.setCharacterEncoding("utf-8");
+        Student_Plus student = new Student_Plus();
+        if (url.contains("create")){
+            create(request, response);
+        } else if (url.contains("update")) {
+            update(request, response);
+        } else if (url.contains("delete")) {
+            delete(request, response);
+        } else if (url.contains("reset")) {
+            request.setAttribute("student", new Student_Plus());
+        }
+        findAll(request, response);
+        request.getRequestDispatcher("/views/Student_Plus.jsp").forward(request, response);
+    }
+
+
+
+    private void create(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException {
+        try {
+            Student_Plus student = new Student_Plus();
+            BeanUtils.populate(student, request.getParameterMap());
+            Student_PlusDAO dao = new Student_PlusDAO();
+            dao.create(student);
+            request.setAttribute("message", "Create success!");
+
+        }catch (Exception e){
+            e.printStackTrace();
+            request.setAttribute("error", "Error: " + e.getMessage());
+        }
+    }
+
+    private void update(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException {
+        try {
+            Student_Plus student = new Student_Plus();
+            BeanUtils.populate(student, request.getParameterMap());
+            Student_PlusDAO dao = new Student_PlusDAO();
+            dao.update((student));
+            request.setAttribute("message", "Update success!");
+
+        }catch (Exception e){
+            e.printStackTrace();
+            request.setAttribute("error", "Error: " + e.getMessage());
+        }
+    }
+
+    private void delete(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException {
+        try {
+            Student_Plus student = new Student_Plus();
+            BeanUtils.populate(student, request.getParameterMap());
+            Student_PlusDAO dao = new Student_PlusDAO();
+            if (student.getId() != 0) {
+                dao.remove(student.getId());
+            }
+            request.setAttribute("message", "Deleted!");
+
+        }catch (Exception e){
+            e.printStackTrace();
+            request.setAttribute("error", "Error: " + e.getMessage());
+        }
+    }
+
+
 
 
 }

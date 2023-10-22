@@ -23,7 +23,7 @@ public class Student_PlusDAO {
             return entity;
         }catch (Exception e){
             e.printStackTrace();
-            em.getTransaction();
+            em.getTransaction().rollback();
             throw new RuntimeException(e);
         }
     }
@@ -36,7 +36,7 @@ public class Student_PlusDAO {
             return entity;
         }catch (Exception e){
             e.printStackTrace();
-            em.getTransaction();
+            em.getTransaction().rollback();
             throw new RuntimeException(e);
         }
     }
@@ -49,8 +49,7 @@ public class Student_PlusDAO {
             em.getTransaction().commit();
             return entity;
         }catch (Exception e){
-            e.printStackTrace();
-            em.getTransaction();
+            em.getTransaction().rollback();
             throw new RuntimeException(e);
         }
     }

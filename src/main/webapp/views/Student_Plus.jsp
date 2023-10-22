@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: hoanganhvu
@@ -5,7 +6,6 @@
   Time: 16:13
   To change this template use File | Settings | File Templates.
 --%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!doctype html>
 <html lang="en">
@@ -78,45 +78,23 @@
 <div class="container">
     <div class="row">
         <div class="col-12 d-flex justify-content-center align-items-center">
-<%--            <form class="col-6" action="/student/index" method="post">--%>
+                <form class="col-6 d-flex justify-content-center align-items-center" action="/student/index" method="post" >
+                    <img src="${not empty student.linkImage ? student.linkImage : 'your-placeholder-image-url'}"
+                         width="300" height="300"
+                         style="display: ${empty student.linkImage ? 'none' : 'block'}">
+                    <span>${not empty student.linkImage ? student.linkImage : 'Link imge'}</span>
+                </form>
 
-<%--                <div class="input-group mb-3 input-group-sm">--%>
-<%--                    <span class="input-group-text" id="input-group-sizing-default">ID</span>--%>
-<%--                    <input name="id" value="${student.id}" type="text" class="form-control" >--%>
-<%--                </div>--%>
+            <form class="col-6" action="/student/index" method="post" >
 
-
-<%--                <div class="input-group mb-3 input-group-sm">--%>
-<%--                    <span class="input-group-text" >Name</span>--%>
-<%--                    <input name="name" value="${student.name}" type="text" class="form-control">--%>
-<%--                </div>--%>
-
-
-<%--                <div class="input-group mb-3 input-group-sm">--%>
-<%--                    <span class="input-group-text">Birth</span>--%>
-<%--                    <input name="birth" value="${student.birth}" type="text" class="form-control">--%>
-<%--                </div>--%>
-
-
-<%--                <div class="input-group mb-3 input-group-sm">--%>
-<%--                    <span class="input-group-text">Phone</span>--%>
-<%--                    <input name="phone" value="${student.phone}" type="text" class="form-control">--%>
-<%--                </div>--%>
-<%--                <div >--%>
-<%--                    <button formaction="/student/create"  class="btn btn-success">Create</button>--%>
-<%--                    <button formaction="/student/update"  class="btn btn-warning">Update</button>--%>
-<%--                    <button formaction="/student/delete"  class="btn btn-danger">Delete</button>--%>
-<%--                    <button formaction="/student/reset"  class="btn btn-primary">Reset</button>--%>
-<%--                </div>
-
-            </form>--%>
-
-
-            <form class="col-6" action="/student/index" method="post" enctype="multipart/form-data">
+                <div class="input-group mb-3 input-group-sm">
+                    <span class="input-group-text" >ID</span>
+                    <input name="id" value="${student.id}" type="text" class="form-control" readonly>
+                </div>
 
                 <div class="input-group mb-3 input-group-sm">
                     <span class="input-group-text" id="input-gr-default">Image</span>
-                    <input name="id" value="${student.linkImage}" type="file" class="form-control" >
+                    <input name="linkImage" value="${student.linkImage}" type="file" class="form-control" >
                 </div>
 
 
@@ -173,8 +151,14 @@
                         <td>${student.birth}</td>
                         <td>${student.phone}</td>
                         <td>
-                            <a href="/student/edit/?id=${student.id}">Edit</a>
-                            <a class="delete" href="/student/delete/?id=${student.id}">Delete</a>
+                            <button  class="btn btn-warning" type="button">
+                                <a href="/student/edit/?id=${student.id}">Edit</a>
+                            </button>
+                            <button class="btn btn-danger" type="button">
+                                <a class="delete" href="/student/delete/?id=${student.id}">Delete</a>
+                            </button>
+
+
                         </td>
                     </tr>
                 </c:forEach>

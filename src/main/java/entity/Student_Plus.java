@@ -1,8 +1,8 @@
 package entity;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.sql.Date;
+//@Temporal(TemporalType.DATE)
 
 @Entity
 @Table(name = "Students")
@@ -19,7 +19,8 @@ public class Student_Plus {
     private String name;
 
     @Column(name = "Birth")
-    private LocalDateTime birth;
+//    @Temporal(TemporalType.DATE)//neu dung Date.until
+    private Date birth;
 
     @Column(name = "Phone")
     private String phone;
@@ -27,7 +28,7 @@ public class Student_Plus {
     public Student_Plus() {
     }
 
-    public Student_Plus(int id, String linkImage, String name, LocalDateTime birth, String phone) {
+    public Student_Plus(int id, String linkImage, String name, Date birth, String phone) {
         this.id = id;
         this.linkImage = linkImage;
         this.name = name;
@@ -59,11 +60,11 @@ public class Student_Plus {
         this.name = name;
     }
 
-    public LocalDateTime getBirth() {
+    public Date getBirth() {
         return birth;
     }
 
-    public void setBirth(LocalDateTime birth) {
+    public void setBirth(Date birth) {
         this.birth = birth;
     }
 
