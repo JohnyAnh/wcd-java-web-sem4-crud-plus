@@ -67,23 +67,19 @@ public class Student_PlusDAO {
         return  query.getResultList();
     }
 
-    public List<Student_Plus> findAll() {
+    public List<Student_Plus> findAll(int pageNumber, int pageSize) {
         String jpql = "SELECT o FROM Student_Plus o";
         TypedQuery<Student_Plus> query = em.createQuery(jpql, Student_Plus.class);
+
+        pageNumber = pageNumber < 1 ? 1 : pageNumber;
+
+        query.setFirstResult((pageNumber - 1)*pageSize);
+        query.setMaxResults(pageSize);
         return query.getResultList();
     }
 
 
-//    public List<Student_Plus> findAll(int pageNumber, int pageSize) {
-//        String jpql = "SELECT o FROM Student_Plus o";
-//        TypedQuery<Student_Plus> query = em.createQuery(jpql, Student_Plus.class);
-//        // Đặt số dòng bắt đầu (vị trí của trang hiện tại) và kích thước trang
-//        int startPosition = (pageNumber - 1) * pageSize;
-//        query.setFirstResult(startPosition);
-//        query.setMaxResults(pageSize);
-//
-//        return query.getResultList();
-//    }
+
 
 
 

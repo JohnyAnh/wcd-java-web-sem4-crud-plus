@@ -1,0 +1,17 @@
+/* CSS để tạo nút giống với nút button */
+.container mt-6 .table table-striped .button-link {
+    display: inline-block;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #007bff; /* Màu nền của nút */
+    border: 1px solid #007bff; /* Viền của nút */
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Khi di chuột vào nút */
+.button-link:hover {
+    background-color: #0056b3; /* Màu nền thay đổi khi di chuột vào */
+}

@@ -19,8 +19,46 @@
             integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
             crossorigin="anonymous">
     <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="Student_Plus.css">
+
 </head>
 <body>
+<style>
+    /* CSS để tạo nút giống với nút button */
+    .button-link1 {
+        display: inline-block;
+        padding: 6px 12px;
+        text-align: center;
+        text-decoration: none;
+        color: #000000;
+        background-color: #ffae00; /* Màu nền của nút */
+        border: 1px solid #ffae00; /* Viền của nút */
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    /* Khi di chuột vào nút */
+    .button-link1:hover {
+        background-color: #f6bf4c; /* Màu nền thay đổi khi di chuột vào */
+    }
+    /* CSS để tạo nút giống với nút button */
+    .button-link2 {
+        display: inline-block;
+        padding: 6px 12px;
+        text-align: center;
+        text-decoration: none;
+        color: #ffffff;
+        background-color: #ff0023; /* Màu nền của nút */
+        border: 1px solid #ff0023; /* Viền của nút */
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    /* Khi di chuột vào nút */
+    .button-link2:hover {
+        background-color: #c2011b; /* Màu nền thay đổi khi di chuột vào */
+    }
+</style>
 <%--navbar--%>
 <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
@@ -78,14 +116,19 @@
 <div class="container">
     <div class="row">
         <div class="col-12 d-flex justify-content-center align-items-center">
-                <form class="col-6 d-flex justify-content-center align-items-center" action="/student/index" method="post" >
+            <form class="col-6 d-flex justify-content-center align-items-center" action="/student/index" method="post" enctype="multipart/form-data" >
+                <div class="card " style="width: 22rem;">
                     <img src="${not empty student.linkImage ? student.linkImage : 'your-placeholder-image-url'}"
-                         width="300" height="300"
+                         width="200" height="200"
                          style="display: ${empty student.linkImage ? 'none' : 'block'}">
-                    <span>${not empty student.linkImage ? student.linkImage : 'Link imge'}</span>
-                </form>
+                    <div class="card-body">
+                        <b class="card-text">Image edit</b>
+                        <span>${not empty student.linkImage ? student.linkImage : 'Link imge'}</span>
+                    </div>
+                </div>
+            </form>
 
-            <form class="col-6" action="/student/index" method="post" >
+            <form class="col-6" action="/student/index" method="post" enctype="multipart/form-data">
 
                 <div class="input-group mb-3 input-group-sm">
                     <span class="input-group-text" >ID</span>
@@ -94,7 +137,7 @@
 
                 <div class="input-group mb-3 input-group-sm">
                     <span class="input-group-text" id="input-gr-default">Image</span>
-                    <input name="linkImage" value="${student.linkImage}" type="file" class="form-control" >
+                    <input name="image" value="${student.linkImage}" type="file" class="form-control" >
                 </div>
 
 
@@ -121,11 +164,12 @@
                     <button formaction="/student/reset"  class="btn btn-primary">Reset</button>
                 </div>
             </form>
+
         </div>
         <br>
-        <div class="container mt-3">
+        <div class="container mt-6">
             <h2>Table Students</h2>
-            <form class="d-flex" role="search">
+            <form method="get" class="d-flex" role="search">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
@@ -151,12 +195,14 @@
                         <td>${student.birth}</td>
                         <td>${student.phone}</td>
                         <td>
-                            <button  class="btn btn-warning" type="button">
-                                <a href="/student/edit/?id=${student.id}">Edit</a>
-                            </button>
-                            <button class="btn btn-danger" type="button">
-                                <a class="delete" href="/student/delete/?id=${student.id}">Delete</a>
-                            </button>
+                            <a href="/student/edit/?id=${student.id}" class="button-link1">Edit</a>
+                            <a href="/student/delete/?id=${student.id}" class="button-link2">Delete</a>
+<%--                            <button  class="btn btn-warning" type="button">--%>
+<%--                                <a href="/student/edit/?id=${student.id}">Edit</a>--%>
+<%--                            </button>--%>
+<%--                            <button class="btn btn-danger" type="button">--%>
+<%--                                <a class="delete" href="/student/delete/?id=${student.id}">Delete</a>--%>
+<%--                            </button>--%>
 
 
                         </td>
@@ -166,7 +212,7 @@
             </table>
             <ul class="pagination">
                 <c:set var="currentPage" value="${param.pageNumber == null ? 1 : param.pageNumber}" />
-                <c:set var="totalPages" value="${students.size() / 5 + 1}" />
+                <c:set var="totalPages" value="${students.size()/5 + 1 }" />
                 <c:choose>
                     <c:when test="${currentPage > 1}">
                         <li class="page-item">
@@ -208,6 +254,7 @@
                     </c:otherwise>
                 </c:choose>
             </ul>
+
         </div>
 
     </div>

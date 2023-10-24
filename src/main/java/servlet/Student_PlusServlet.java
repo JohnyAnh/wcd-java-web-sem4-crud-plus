@@ -5,13 +5,17 @@ import entity.Student_Plus;
 import org.apache.commons.beanutils.BeanUtils;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+@MultipartConfig()
 @WebServlet({
         "/student/index",
         "/student/create",
@@ -26,9 +30,21 @@ public class Student_PlusServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     public Student_PlusServlet(){
     }
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String url = request.getRequestURL().toString();
         request.setCharacterEncoding("utf-8");
+
+//        String pageNumberParam = request.getParameter("pageNumber");
+//        int pageNumber = 1; // Trang mặc định
+//
+//        if (pageNumberParam != null) {
+//            try {
+//                pageNumber = Integer.parseInt(pageNumberParam);
+//            } catch (NumberFormatException e) {
+//                // Xử lý lỗi nếu giá trị pageNumber không hợp lệ
+//            }
+//        }
 
 
 
@@ -51,49 +67,47 @@ public class Student_PlusServlet extends HttpServlet {
             student = new Student_Plus();
         }
 
-        //Phan page
-//        int pageNumber = 1; // Trang mặc định
-//        int pageSize = 5; // Kích thước trang mặc định
-//        // Kiểm tra xem trang và kích thước trang có được cung cấp trong yêu cầu không
-//        String pageNumberParam = request.getParameter("pageNumber");
-//        String pageSizeParam = request.getParameter("pageSize");
-//
-//        if (pageNumberParam != null && pageSizeParam != null) {
-//            try {
-//                pageNumber = Integer.parseInt(pageNumberParam);
-//                pageSize = Integer.parseInt(pageSizeParam);
-//            } catch (NumberFormatException e) {
-//                // Xử lý lỗi nếu giá trị pageNumber hoặc pageSize không hợp lệ
-//                request.setAttribute("error", "Invalid pageNumber or pageSize");
-//            }
-//        }
-//
-        findAll(request, response);
+        String pageNumberParam = request.getParameter("pageNumber");
+        int pageNumber = 1; // Trang mặc định
+
+        if (pageNumberParam != null) {
+            try {
+                pageNumber = Integer.parseInt(pageNumberParam);
+            } catch (NumberFormatException e) {
+                // Xử lý lỗi nếu giá trị pageNumber không hợp lệ
+            }
+        }
+        int pageSize = 20; // Kích thước trang
+        findAll(request, response, pageNumber, pageSize);
         request.getRequestDispatcher("/views/Student_Plus.jsp").forward(request,response);
 
     }
 
-    private void findAll(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
+//    private void findAll(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
+//        try {
+//            Student_PlusDAO dao = new Student_PlusDAO();
+//            List<Student_Plus> list = dao.findAll();
+//            request.setAttribute("students", list);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            request.setAttribute("error","Error: "+ e.getMessage() );
+//        }
+//    }
+
+
+    private void findAll(HttpServletRequest request, HttpServletResponse response, int pageNumber, int pageSize) throws ServletException, IOException {
         try {
             Student_PlusDAO dao = new Student_PlusDAO();
-            List<Student_Plus> list = dao.findAll();
+            List<Student_Plus> list = dao.findAll(pageNumber, pageSize);
             request.setAttribute("students", list);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error","Error: "+ e.getMessage() );
+            request.setAttribute("error", "Error: " + e.getMessage());
         }
     }
 
-    //    private void findAll(HttpServletRequest request, HttpServletResponse response, int pageNumber, int pageSize) {
-//        try {
-//            Student_PlusDAO dao = new Student_PlusDAO();
-//            List<Student_Plus> list = dao.findAll(pageNumber, pageSize);
-//            request.setAttribute("students", list);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            request.setAttribute("error", "Error: " + e.getMessage());
-//        }
-//    }
+
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         String url = request.getRequestURL().toString();
         request.setCharacterEncoding("utf-8");
@@ -107,7 +121,21 @@ public class Student_PlusServlet extends HttpServlet {
         } else if (url.contains("reset")) {
             request.setAttribute("student", new Student_Plus());
         }
-        findAll(request, response);
+
+
+
+        String pageNumberParam = request.getParameter("pageNumber");
+        int pageNumber = 1; // Trang mặc định
+
+        if (pageNumberParam != null) {
+            try {
+                pageNumber = Integer.parseInt(pageNumberParam);
+            } catch (NumberFormatException e) {
+                // Xử lý lỗi nếu giá trị pageNumber không hợp lệ
+            }
+        }
+        int pageSize = 20; // Kích thước trang
+        findAll(request, response, pageNumber, pageSize);
         request.getRequestDispatcher("/views/Student_Plus.jsp").forward(request, response);
     }
 
@@ -117,9 +145,36 @@ public class Student_PlusServlet extends HttpServlet {
         try {
             Student_Plus student = new Student_Plus();
             BeanUtils.populate(student, request.getParameterMap());
-            Student_PlusDAO dao = new Student_PlusDAO();
-            dao.create(student);
-            request.setAttribute("message", "Create success!");
+
+            File dir = new File(request.getServletContext().getRealPath("/files"));
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            Part avatar = request.getPart("image");
+
+            if (dir != null && avatar != null && avatar.getSubmittedFileName() != null){
+                File imageFile = new File(dir, avatar.getSubmittedFileName());
+                avatar.write(imageFile.getAbsolutePath());
+
+                request.setAttribute("imageLink",imageFile.getName());
+
+                request.setAttribute("ketqua", "thanhcong");
+
+//                request.getRequestDispatcher("views/Student_Plus.jsp").forward(request, response); // tra ve tran dieu huong
+
+                student.setLinkImage("/files/" + avatar.getSubmittedFileName());
+
+                System.out.println("avatar path "+imageFile);
+                System.out.println("dir "+dir);
+
+                Student_PlusDAO dao = new Student_PlusDAO();
+                dao.create(student);
+                request.setAttribute("message", "Create success!");
+
+
+            } else
+            System.out.println("Upload error");
 
         }catch (Exception e){
             e.printStackTrace();
@@ -131,9 +186,28 @@ public class Student_PlusServlet extends HttpServlet {
         try {
             Student_Plus student = new Student_Plus();
             BeanUtils.populate(student, request.getParameterMap());
-            Student_PlusDAO dao = new Student_PlusDAO();
-            dao.update((student));
-            request.setAttribute("message", "Update success!");
+
+            File dir = new File(request.getServletContext().getRealPath("/files"));
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            Part avatar = request.getPart("image");
+            if (dir != null && avatar != null && avatar.getSubmittedFileName() != null){
+                File imageFile = new File(dir, avatar.getSubmittedFileName());
+
+                avatar.write(imageFile.getAbsolutePath());
+                request.setAttribute("imageLink",imageFile.getName());
+                student.setLinkImage("/files/" + avatar.getSubmittedFileName());
+
+                System.out.println("avatar path "+imageFile);
+
+                Student_PlusDAO dao = new Student_PlusDAO();
+                dao.update((student));
+                request.setAttribute("message", "Update success!");
+            }
+
+
 
         }catch (Exception e){
             e.printStackTrace();
