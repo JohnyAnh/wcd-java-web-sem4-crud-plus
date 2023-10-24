@@ -68,7 +68,7 @@ public class Student_PlusDAO {
     }
 
     public List<Student_Plus> findAll(int pageNumber, int pageSize) {
-        String jpql = "SELECT o FROM Student_Plus o";
+        String jpql = "SELECT o FROM Student_Plus o ORDER BY o.id DESC";
         TypedQuery<Student_Plus> query = em.createQuery(jpql, Student_Plus.class);
 
         pageNumber = pageNumber < 1 ? 1 : pageNumber;
