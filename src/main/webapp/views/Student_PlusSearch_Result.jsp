@@ -1,3 +1,5 @@
+
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
@@ -6,7 +8,13 @@
   Time: 16:13
   To change this template use File | Settings | File Templates.
 --%>
+
+<%@ page import="java.util.List" %>          <!-- Import List -->
+<%@ page import="entity.Student_Plus" %>          <!-- Import entity.Student_Plus -->
+<%@ page import="servlet.Student_PlusSearch_ResultServlet" %>     <!-- Import entity.Student_Plus -->
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -171,9 +179,11 @@
         <div class="container mt-6">
             <h2>Table Students</h2>
             <form action="/student/search" method="post" class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" type="text" name="keyword" >
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
+            <%--Search--%>
+            <c:if test = "${ (searchResults != null && !searchResults.isEmpty()) }" >
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -186,7 +196,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach var="student" items="${students}">
+                <c:forEach var="student" items="${searchResults}">
                     <tr>
                         <td>${student.id}</td>
                         <td>
@@ -198,12 +208,16 @@
                         <td>
                             <a href="/student/edit/?id=${student.id}" class="button-link1">Edit</a>
                             <a href="/student/delete/?id=${student.id}" class="button-link2">Delete</a>
-
                         </td>
                     </tr>
                 </c:forEach>
                 </tbody>
             </table>
+            </c:if>
+            <c:if test="${empty searchResults}">
+            <p>No results found.</p>
+            </c:if>:
+
             <ul class="pagination">
                 <c:set var="currentPage" value="${param.pageNumber == null ? 1 : param.pageNumber}" />
                 <c:set var="totalPages" value="${students.size()/5 + 1 }" />

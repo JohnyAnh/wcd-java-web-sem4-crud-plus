@@ -67,6 +67,14 @@ public class Student_PlusDAO {
         return  query.getResultList();
     }
 
+    public List<Student_Plus> searchStudents(String keyword) {
+        String jpql = "SELECT s FROM Student_Plus s WHERE s.name LIKE :keyword";
+        TypedQuery<Student_Plus> query = em.createQuery(jpql, Student_Plus.class);
+        query.setParameter("keyword", "%" + keyword + "%");
+        return query.getResultList();
+    }
+
+
     public List<Student_Plus> findAll(int pageNumber, int pageSize) {
         String jpql = "SELECT o FROM Student_Plus o ORDER BY o.id DESC";
         TypedQuery<Student_Plus> query = em.createQuery(jpql, Student_Plus.class);

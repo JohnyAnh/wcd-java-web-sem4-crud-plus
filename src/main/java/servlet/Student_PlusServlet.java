@@ -18,6 +18,7 @@ import java.util.List;
 @MultipartConfig()
 @WebServlet({
         "/student/index",
+        "/student/search",
         "/student/create",
         "/student/update",
         "/student/delete",
@@ -34,20 +35,6 @@ public class Student_PlusServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String url = request.getRequestURL().toString();
         request.setCharacterEncoding("utf-8");
-
-//        String pageNumberParam = request.getParameter("pageNumber");
-//        int pageNumber = 1; // Trang mặc định
-//
-//        if (pageNumberParam != null) {
-//            try {
-//                pageNumber = Integer.parseInt(pageNumberParam);
-//            } catch (NumberFormatException e) {
-//                // Xử lý lỗi nếu giá trị pageNumber không hợp lệ
-//            }
-//        }
-
-
-
         Student_Plus student = null;
         if (url.contains(("delete"))) {
             Student_PlusDAO dao = new Student_PlusDAO();
@@ -67,6 +54,10 @@ public class Student_PlusServlet extends HttpServlet {
             student = new Student_Plus();
         }
 
+
+
+
+//Phân trang
         String pageNumberParam = request.getParameter("pageNumber");
         int pageNumber = 1; // Trang mặc định
 
@@ -120,7 +111,20 @@ public class Student_PlusServlet extends HttpServlet {
             delete(request, response);
         } else if (url.contains("reset")) {
             request.setAttribute("student", new Student_Plus());
+        }else if (url.contains("search")) {
+            search(request, response);
         }
+
+//        String keyword = request.getParameter("keyword");
+//
+//        // Thực hiện tìm kiếm trong CSDL bằng cách gọi phương thức tìm kiếm từ lớp DAO
+//        List<Student_Plus> searchResults = performSearch(keyword);
+//
+//        // Lưu kết quả tìm kiếm vào request
+//        request.setAttribute("searchResults", searchResults);
+//
+//        // Chuyển hướng đến trang kết quả tìm kiếm
+//        request.getRequestDispatcher("/Student_PlusSearch_Result.jsp").forward(request, response);
 
 
 
@@ -139,6 +143,9 @@ public class Student_PlusServlet extends HttpServlet {
         request.getRequestDispatcher("/views/Student_Plus.jsp").forward(request, response);
     }
 
+    private void search(HttpServletRequest request, HttpServletResponse response) {
+
+    }
 
 
     private void create(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException {
@@ -181,6 +188,13 @@ public class Student_PlusServlet extends HttpServlet {
             request.setAttribute("error", "Error: " + e.getMessage());
         }
     }
+
+//    private List<Student_Plus> performSearch(String keyword) {
+//        // Thực hiện tìm kiếm trong CSDL và trả về danh sách kết quả
+//        Student_PlusDAO dao = new Student_PlusDAO();
+//        // Cài đặt phương thức này trong lớp DAO
+//        return dao.searchStudents(keyword);
+//    }
 
     private void update(HttpServletRequest request, HttpServletResponse response)throws ServletException,IOException {
         try {
